@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:vercel": "npm run install-dotnet && ~/.net/dotnet public -c Release"
+    "install-dotnet": "./dotnet-install.sh --channel 6.0 --install-dir ~/.net/",
+    "build:vercel": "npm run install-dotnet && ~/.net/dotnet publish -c Release"
   },
   "author": "",
   "license": "MIT"
