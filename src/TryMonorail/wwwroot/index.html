@@ -12,9 +12,9 @@
             margin:0;
             padding:0;
             background-color: rgba(17, 24, 39, 1);
-
+            overflow-y:hidden;
         }
-        
+
         .monaco-editor-container {
             height: 100%;
             width: 100%;
@@ -41,7 +41,7 @@
             /* This section calls the slideInFromLeft animation we defined above */
             animation: .25s ease-out 0s 1 clearToFull;
         }
-        
+
         .lds-ellipsis {
             display: inline-block;
             position: relative;
@@ -122,8 +122,8 @@
 <script>
     window.postPreviewMessage = (element, data) =>  {
             if (element !== undefined){
-                element.contentWindow.postMessage(data, '*')    
-            }         
+                element.contentWindow.postMessage(data, '*')
+            }
     };
 </script>
 
