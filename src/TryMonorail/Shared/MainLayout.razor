@@ -22,7 +22,7 @@
 
     protected override void OnInitialized()
     {
-        var foo = new CssFramework(DesignSystem.Default);
+        var foo = new CssFramework();
         var values = CssJit.Values();
         _cssContent = foo.Process(values);
     }

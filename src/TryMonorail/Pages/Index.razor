@@ -1,9 +1,10 @@
 ﻿@page "/"
 @using BlazorMonaco
-@using AngleSharp.Html.Parser
 @using MonorailCss
 @using System.Reactive.Subjects
 @using System.Reactive.Linq
+@using System.Text.RegularExpressions
+@using System.Diagnostics
 @inject IJSRuntime JS
 
 
@@ -37,7 +38,14 @@
     private ElementReference PreviewViewer { get; set; }
     private string HtmlContents { get; set; } = string.Empty;
 
-    private readonly CssFramework _framework = new CssFramework(DesignSystem.Default).Apply("body", "font-sans");
+    private readonly CssFramework _framework = new CssFramework(new CssFrameworkSettings()
+    {
+        Applies = new Dictionary<string, string>()
+        {
+            { "body", "font-sans" }
+        }
+    });
+
     private readonly Subject<ModelContentChangedEvent> _processHtml = new();
 
     protected override void OnInitialized()
@@ -88,29 +96,30 @@
         var opts = StandardOptions();
         opts.ReadOnly = true;
         opts.Language = "css";
+        opts.ColorDecorators = false;
         return opts;
     }
 
     private async Task<bool> ModelChanged()
     {
-        var htmlParser = new HtmlParser();
         var htmlContent = await HtmlEditor.GetValue();
-        var htmlDocument = await htmlParser.ParseDocumentAsync(htmlContent);
-        List<string> allClasses = new();
-        foreach (var element in htmlDocument.All.Where(x => x.ClassName != null))
+
+        const string regExPattern = @"class\s*=\s*[\'\""](?<value>[^<]*?)[\'\""]";
+        var matches = Regex.Matches(htmlContent, regExPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var results = new List<string>(matches.Count);
+        for (var i = 0; i < matches.Count; i++)
         {
-            var classes = element.ClassName!.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            allClasses.AddRange(classes);
+            results.Add(matches[i].Groups["value"].Captures[0].Value);
         }
 
-        var (reset, css) = _framework.ProcessSplit(allClasses);
+        var (reset, css) = _framework.ProcessSplit(results);
 
         await CssEditor.SetValue(css);
 
         var previewData = new PreviewData()
         {
             Html = htmlContent,
-            Css = reset + css
+            Css = $"{reset}{css}"
         };
 
         await JS.InvokeVoidAsync("postPreviewMessage", PreviewViewer, previewData);
@@ -172,7 +181,6 @@
     <meta name=""viewport"" content=""width=device-width, initial-scale=1"">
     <style id=""_style""></style>
     <script>
-        console.log('here we go')
         var hasHtml = false
         var hasCss = false
         var visible = false
