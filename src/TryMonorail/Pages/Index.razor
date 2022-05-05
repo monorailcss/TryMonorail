@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using BlazorMonaco
-@using MonorailCss
+@using global::MonorailCss
 @using System.Reactive.Subjects
 @using System.Reactive.Linq
 @using System.Text.RegularExpressions
@@ -54,7 +54,7 @@
 
         _processHtml.Throttle(TimeSpan.FromMilliseconds(350))
             .SelectMany(_ => ModelChanged())
-            .Subscribe(ts => { StateHasChanged(); });
+            .Subscribe(_ => { StateHasChanged(); });
     }
 
     private StandaloneEditorConstructionOptions StandardOptions() => new()
@@ -116,7 +116,7 @@
 
         await CssEditor.SetValue(css);
 
-        var previewData = new PreviewData()
+        var previewData = new PreviewData
         {
             Html = htmlContent,
             Css = $"{reset}{css}"
@@ -249,7 +249,6 @@
     });
 </script>
 </html>
-
 ";
 }
 

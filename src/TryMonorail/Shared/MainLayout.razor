@@ -1,4 +1,4 @@
-﻿@using MonorailCss
+﻿@using global::MonorailCss
 @inherits LayoutComponentBase
 
 <HeadContent>
@@ -22,9 +22,8 @@
 
     protected override void OnInitialized()
     {
-        var foo = new CssFramework();
-        var values = CssJit.Values();
-        _cssContent = foo.Process(values);
+        var cssFramework = new CssFramework();
+        var values = MonorailCss.Values();
+        _cssContent = cssFramework.Process(values);
     }
-
 }
