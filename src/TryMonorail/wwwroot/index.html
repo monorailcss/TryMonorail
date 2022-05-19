@@ -7,13 +7,6 @@
     <title>BlazorWasmTestApp</title>
     <link href="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.css" rel="stylesheet" />
 
-    <link rel="preload" href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.nls.js" as="script">
-    <link rel="preload" href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/language/html/htmlMode.js" as="script">
-    <link rel="preload" href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/basic-languages/html/html.js" as="script">
-    <link rel="preload" href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/language/css/cssMode.js" as="script">
-    <link rel="preload" href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/basic-languages/css/css.js" as="script">
-    <link rel="preload" crossorigin="anonymous" href="/_content/BlazorMonaco/lib/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf" as="font">
-
     <style>
         body {
             margin:0;
@@ -114,6 +107,7 @@
 
     </style>
 
+    <script src="https://unpkg.com/split-grid/dist/split-grid.js"></script>
     <base href="/" />
 </head>
 
@@ -132,11 +126,22 @@
 <script src="_content/BlazorMonaco/jsInterop.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
 
+
 <script>
     window.postPreviewMessage = (element, data) =>  {
             if (element !== undefined){
                 element.contentWindow.postMessage(data, '*')
             }
+    };
+
+    window.initSplit = (element, data) =>  {
+        console.info(document.querySelector('.gutter-col-1'));
+        window.Split({
+            columnGutters: [{
+                track: 1,
+                element: document.querySelector('.gutter-col-1'),
+            }],
+        })
     };
 </script>
 
