@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{17252948-B38
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TryMonorail", "src\TryMonorail\TryMonorail.csproj", "{FF3A1EB6-61EC-4827-A87B-0B2757BC8CA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorMonaco", "src\BlazorMonaco\BlazorMonaco.csproj", "{948CB0EC-9F2D-47AB-BE33-27A7AC27F4C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{FF3A1EB6-61EC-4827-A87B-0B2757BC8CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF3A1EB6-61EC-4827-A87B-0B2757BC8CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF3A1EB6-61EC-4827-A87B-0B2757BC8CA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{948CB0EC-9F2D-47AB-BE33-27A7AC27F4C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{948CB0EC-9F2D-47AB-BE33-27A7AC27F4C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{948CB0EC-9F2D-47AB-BE33-27A7AC27F4C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{948CB0EC-9F2D-47AB-BE33-27A7AC27F4C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FF3A1EB6-61EC-4827-A87B-0B2757BC8CA2} = {17252948-B381-4BD9-B0D9-373FD680813A}
+		{948CB0EC-9F2D-47AB-BE33-27A7AC27F4C0} = {17252948-B381-4BD9-B0D9-373FD680813A}
 	EndGlobalSection
 EndGlobal

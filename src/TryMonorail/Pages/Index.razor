@@ -4,7 +4,9 @@
 @using System.Reactive.Subjects
 @using System.Reactive.Linq
 @using System.Text.RegularExpressions
-@inject IJSRuntime JS
+@using BlazorMonaco.Bridge
+@using JetBrains.Annotations
+@inject IJSRuntime Js
 
 
 <PageTitle>Try MonorailCss</PageTitle>
@@ -20,7 +22,7 @@
         <div class="flex flex-col border-t border-gray-700">
             <header class="flex-none px-6 py-4 bg-gray-800 text-gray-50 border-b border-gray-700">Generated CSS</header>
             <div class="flex-auto">
-                <MonacoEditor @ref="CssEditor" Id="cssViewer" ConstructionOptions="ViewerConstructionOptions" OnDidInit="EditorOnInit"/>
+                <MonacoEditor @ref="CssEditor" Id="cssViewer" ConstructionOptions="ViewerConstructionOptions" />
             </div>
         </div>
     </div>
@@ -37,8 +39,9 @@
     private MonacoEditor CssEditor { get; set; } = null!;
     private ElementReference PreviewViewer { get; set; }
     private string HtmlContents { get; set; } = string.Empty;
+    private CompletionItem[] _allClasses = null!;
 
-    private readonly CssFramework _framework = new CssFramework(new CssFrameworkSettings()
+    private readonly CssFramework _framework = new(new CssFrameworkSettings()
     {
         Applies = new Dictionary<string, string>()
         {
@@ -51,6 +54,14 @@
     protected override void OnInitialized()
     {
         HtmlContents = PreviewHtml;
+        _allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem()
+        {
+            Label = kvp.Key,
+            Detail = kvp.Value,
+            Preselect = false,
+            InsertText = kvp.Key,
+            Kind = CompletionItemKind.Text
+        }).ToArray();
 
         _processHtml.Throttle(TimeSpan.FromMilliseconds(350))
             .SelectMany(_ => ModelChanged())
@@ -61,7 +72,7 @@
     {
         if (firstRender)
         {
-            await JS.InvokeVoidAsync("initSplit");
+            await Js.InvokeVoidAsync("initSplit");
         }
 
     }
@@ -92,7 +103,7 @@
         Folding = true,
         LineDecorationsWidth = "16px",
         Contextmenu = false,
-        Theme = "my-custom-theme"
+        Theme = "my-custom-theme",
     };
 
     private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
@@ -114,7 +125,7 @@
         var htmlContent = await HtmlEditor.GetValue();
 
         const string regExPattern = @"class\s*=\s*[\'\""](?<value>[^<]*?)[\'\""]";
-        var matches = Regex.Matches(htmlContent, regExPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var matches = Regex.Matches(htmlContent, regExPattern, RegexOptions.IgnoreCase);
         var results = new List<string>(matches.Count);
         for (var i = 0; i < matches.Count; i++)
         {
@@ -131,7 +142,7 @@
             Css = $"{reset}{css}"
         };
 
-        await JS.InvokeVoidAsync("postPreviewMessage", PreviewViewer, previewData);
+        await Js.InvokeVoidAsync("postPreviewMessage", PreviewViewer, previewData);
 
         return true;
     }
@@ -154,7 +165,23 @@
             },
         });
 
-        await MonacoEditor.SetTheme("my-custom-theme");
+        await MonacoEditorBase.SetTheme("my-custom-theme");
+
+        await MonacoEditorBase.RegisterCompletionItemProvider("html", async (uri, position) =>
+        {
+            var model = await MonacoEditorBase.GetModel(uri);
+            var value = await model.GetValueInRange(new BlazorMonaco.Bridge.Range(position.LineNumber, 1, position.LineNumber, position.Column), EndOfLinePreference.TextDefined);
+
+            var m = Regex.Match(value, "<.*?class=[\\\"|\\'](.*)[^\\\"]*?$");
+
+            if (!m.Success) return Array.Empty<CompletionItem>();
+
+            var c = await model.GetWordAtPosition(position);
+            var candidates = c == default ? _allClasses : _allClasses.Where(i => i.Label.StartsWith(c.Word)).ToArray();
+
+            return candidates;
+        });
+
         await HtmlEditor.SetValue(@"
 <!--
     Welcome to Monorail Play. Feel free to edit the HTML below and watch the
@@ -175,6 +202,7 @@
 </div>".Trim());
     }
 
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     class PreviewData
     {
         public string Css { get; init; } = string.Empty;
