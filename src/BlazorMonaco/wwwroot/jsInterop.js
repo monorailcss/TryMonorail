@@ -890,6 +890,27 @@ window.blazorMonaco.languages = {
     },
 
     registerMonorailCompletionProvider: function(items){
+        monaco.languages.registerHoverProvider('html', {
+            provideHover: function (model, position) {
+                const word = model.getWordAtPosition(position);
+                if (word !== null){
+                    const item = items.find(i => i.label === word.word);
+                    if (item !== undefined){
+                        let css = item.label + '{\n';
+                        css = css + item.detail.split(';').filter(i => i.trim() !== '').map(i => '  ' + i + ';\n').join('');
+                        css = css + '}';
+
+                        return {
+                            contents: [
+                                { value: '**CSS**' },
+                                { value: '```css\n' + css + '\n```' }
+                            ]
+                        };
+                    }
+                }
+            }
+        });
+
         monaco.languages.registerCompletionItemProvider('html', {
             triggerCharacters: [' ', '"', ':'],
             provideCompletionItems: (model, position, context, token) => {
