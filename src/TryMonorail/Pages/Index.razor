@@ -89,6 +89,8 @@
         RenderLineHighlight = "none",
         FontFamily = "'Cascadia Code', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
         FontWeight = "300",
+        SuggestFontSize = 13,
+        SuggestLineHeight = 17,
         FontSize = 15,
         Padding = new EditorPaddingOptions(){ Top = 4, Bottom = 4},
         Hover = new EditorHoverOptions()
@@ -161,7 +163,11 @@
             {
                 ["editor.background"] = "#FFFFFF00",
                 ["editorCursor.foreground"] = "#E0E0E0",
-                ["editorLineNumber.foreground"] = "#7A7A7A66"
+                ["editorLineNumber.foreground"] = "#7A7A7A66",
+                ["editorSuggestWidget.background"] = "#354771F0",
+                ["editorSuggestWidget.selectedBackground"] = "#354771",
+                ["editorSuggestWidget.selectedForeground"] = "#e2e6e6",
+                ["editorSuggestWidget.foreground"] = "#e2e6e6",
             },
         });
 
