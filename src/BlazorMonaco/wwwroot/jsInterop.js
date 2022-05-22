@@ -889,6 +889,43 @@ window.blazorMonaco.languages = {
         });
     },
 
+    registerMonorailCompletionProvider: function(items){
+        monaco.languages.registerCompletionItemProvider('html', {
+            triggerCharacters: [' ', '"', ':'],
+            provideCompletionItems: (model, position, context, token) => {
+                const textUntilPosition = model.getValueInRange({
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column
+                });
+
+                const match = textUntilPosition.match(
+                    /<.*class\s*=\s*['|"]([^"]*)?$/
+                );
+                if (!match) {
+                    return {suggestions: []};
+                }
+
+                const c = model.getWordAtPosition(position);
+                if (c === null){
+                    const newItems = items.map(i => {
+                        return { ...i }
+                    })
+                    return { suggestions: newItems };
+                }
+
+                const filtered = items
+                    .filter(i => i.label.startsWith(c.word))
+                    .map(i => {
+                        return { ...i }
+                    });
+
+                return { suggestions: filtered };
+            }
+        });
+    },
+
     registerCompletionItemProvider: function (language, provider) {
         monaco.languages.registerCompletionItemProvider(language, {
             triggerCharacters: [' ', '"', ':'],

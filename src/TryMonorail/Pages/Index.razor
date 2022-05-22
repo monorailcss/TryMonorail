@@ -166,21 +166,7 @@
         });
 
         await MonacoEditorBase.SetTheme("my-custom-theme");
-
-        await MonacoEditorBase.RegisterCompletionItemProvider("html", async (uri, position) =>
-        {
-            var model = await MonacoEditorBase.GetModel(uri);
-            var value = await model.GetValueInRange(new BlazorMonaco.Bridge.Range(position.LineNumber, 1, position.LineNumber, position.Column), EndOfLinePreference.TextDefined);
-
-            var m = Regex.Match(value, "<.*?class=[\\\"|\\'](.*)[^\\\"]*?$");
-
-            if (!m.Success) return Array.Empty<CompletionItem>();
-
-            var c = await model.GetWordAtPosition(position);
-            var candidates = c == default ? _allClasses : _allClasses.Where(i => i.Label.StartsWith(c.Word)).ToArray();
-
-            return candidates;
-        });
+        await MonacoEditorBase.RegisterMonorailCompletionProvider(_allClasses);
 
         await HtmlEditor.SetValue(@"
 <!--
@@ -188,7 +174,7 @@
     preview and generated CSS change as you edit.
 -->
 <div class=""grid place-items-center h-screen w-full bg-gradient-to-bl from-slate-600 via-sky-500 to-sky-300"">
-    <div class=""text-slate-800  text-sm md:text-base border border-slate-700/20 px-8 py-4 bg-gray-100 sm:rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl"">
+    <div class=""text-slate-800 text-sm md:text-base border border-slate-700/20 px-8 py-4 bg-gray-100 sm:rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl"">
         <h2 class=""text-2xl md:text-4xl font-extrabold mb-4"">Welcome to Monorail<span class=""text-sky-500"">CSS</span></h2>
 
         <ul class=""list-disc list-inside  mb-8"">

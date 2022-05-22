@@ -539,5 +539,13 @@
         await StaticJsRuntime.InvokeVoidAsync("blazorMonaco.languages.registerCompletionItemProvider", language, DotNetObjectReference.Create(new CompletionItemProvider(func)));
     }
 
+    public static async Task RegisterMonorailCompletionProvider(CompletionItem[] items)
+    {
+        if (StaticJsRuntime == null)
+            return;
+
+        await StaticJsRuntime.InvokeVoidAsync("blazorMonaco.languages.registerMonorailCompletionProvider", new object[] { items });
+    }
+
     #endregion
 }
