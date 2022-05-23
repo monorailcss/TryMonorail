@@ -41,6 +41,7 @@
     private string HtmlContents { get; set; } = string.Empty;
     private CompletionItem[] _allClasses = null!;
 
+    private readonly CssFramework _previewFramework = new CssFramework();
     private readonly CssFramework _framework = new(new CssFrameworkSettings()
     {
         Applies = new Dictionary<string, string>()
@@ -51,7 +52,7 @@
 
     private readonly Subject<ModelContentChangedEvent> _processHtml = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         HtmlContents = PreviewHtml;
         _allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem()
@@ -175,6 +176,57 @@
 
         await MonacoEditorBase.SetTheme("my-custom-theme");
         await MonacoEditorBase.RegisterMonorailCompletionProvider(_allClasses);
+        await MonacoEditorBase.RegisterHoverProviderAsync("html", async (uri, position) =>
+        {
+            var model = await MonacoEditorBase.GetModel(uri);
+
+            // do we have a word we are hovering over? if not bail.
+            var word = await model.GetWordAtPosition(position);
+            if (word == null)
+            {
+                return null;
+            }
+
+            // check to see if we are hovering over something in a css class definition.
+            var textUntilPosition = await model.GetValueInRange(new BlazorMonaco.Bridge.Range()
+            {
+                StartColumn = 1, StartLineNumber = 1, EndColumn = position.Column, EndLineNumber = position.LineNumber
+            }, EndOfLinePreference.TextDefined);
+
+            var match = Regex.Match(textUntilPosition, "<.*class\\s*=\\s*['|\"]([^\"]*)?$");
+
+            if (!match.Success)
+            {
+                return null;
+            }
+
+            // we can't use the default model.getWordAtPosition because it uses a bunch of characters as delimiters
+            // that we don't care about. so we'll get the current word and search for the first previous and last whitespace
+            // by hand.
+            var line = await model.GetLineContent(position.LineNumber);
+            var splitChars = new[] { '\t', ' ', '\'', '\"' };
+            var firstIndex = line.LastIndexOfAny(splitChars, word.StartColumn) + 1;
+            var lastIndex = line.IndexOfAny(splitChars, word.EndColumn - 1);
+            var w = line[firstIndex..lastIndex];
+            var css = _previewFramework.ProcessSplit(new[] { w });
+
+            // return the word with a custom range matching our calculations.
+            return new Hover()
+            {
+                Contents = new []
+                {
+                    new MarkdownString { Value = $"**CSS**", Uris = uri, IsTrusted = true, SupportThemeIcons = false },
+                    new MarkdownString { Value = $"```css\n{css.Utilities}\n```", Uris = uri, IsTrusted = true, SupportThemeIcons = false }
+                },
+                Range = new BlazorMonaco.Bridge.Range()
+                {
+                    StartLineNumber = position.LineNumber,
+                    EndLineNumber = position.LineNumber,
+                    StartColumn = firstIndex + 1,
+                    EndColumn = lastIndex + 1
+                }
+            };
+        });
 
         await HtmlEditor.SetValue(@"
 <!--

@@ -7,3 +7,5 @@ public delegate Task<CodeAction[]> CodeActionProviderAsyncFunc(string uri, Range
 public delegate CompletionItem[] CompletionItemProviderFunc(string uri, Position position);
 
 public delegate Task<CompletionItem[]> CompletionItemProviderAsyncFunc(string uri, Position position);
+
+public delegate Task<Hover> HoverProviderFuncAsync(string uri, Position position);

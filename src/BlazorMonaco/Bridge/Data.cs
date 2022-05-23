@@ -162,6 +162,13 @@ public class TextEdit
     public EndOfLineSequence? Eol { get; set; }
 }
 
+public class Hover
+{
+    public MarkdownString[] Contents { get; set; }
+
+    public Range Range { get; set; }
+}
+
 public class CompletionItem
 {
     public string Label { get; set; }
@@ -177,4 +184,9 @@ public class CompletionItem
     public string InsertText { get; set; }
 
     public bool Preselect { get; set; }
+}
+
+public class LanguageConfiguration
+{
+    public string WordPattern { get; set; }
 }

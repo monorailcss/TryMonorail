@@ -1,4 +1,6 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.JSInterop;
 
 namespace BlazorMonaco.Bridge;
 
@@ -29,6 +31,22 @@ internal class CodeActionProvider
     private class CodeActionResult
     {
         public CodeAction[] Actions { get; set; } = Array.Empty<CodeAction>();
+    }
+}
+
+internal class HoverProvider
+{
+    private readonly HoverProviderFuncAsync _asyncFunc;
+
+    public HoverProvider(HoverProviderFuncAsync func)
+    {
+        _asyncFunc = func;
+    }
+
+    [JSInvokable]
+    public async Task<object> Invoke(string uri, Position position)
+    {
+        return await _asyncFunc(uri, position);
     }
 }
 
