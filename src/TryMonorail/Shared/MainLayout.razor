@@ -9,7 +9,7 @@
 
 <div id="main-app" class="font-sans bg-gray-900 h-screen flex flex-col">
     <header class="uppercase py-3 pl-5 pr-3 items-center space-x-4 antialiased text-gray-100 font-thin text-3xl">
-        Monorail<span class="text-sky-500 font-black">Play</span>
+        Monorail<span class="text-sky-400 font-black">Play</span>
     </header>
     <main class="flex-auto">
         @Body
@@ -20,10 +20,11 @@
 @code{
     private string _cssContent = null!;
 
-    protected override void OnInitialized()
+    protected override void OnAfterRender(bool firstRender)
     {
-        var cssFramework = new CssFramework();
         var values = MonorailCss.CssClassValues();
-        _cssContent = cssFramework.Process(values);
+        var framework = new CssFramework();
+        _cssContent = framework.Process(values);
+        base.OnAfterRender(firstRender);
     }
 }

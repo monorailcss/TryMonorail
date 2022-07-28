@@ -52,7 +52,7 @@
 
     private readonly Subject<ModelContentChangedEvent> _processHtml = new();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         HtmlContents = PreviewHtml;
         _allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem()
@@ -170,7 +170,8 @@
                 ["editorSuggestWidget.selectedBackground"] = "#354771",
                 ["editorSuggestWidget.selectedForeground"] = "#e2e6e6",
                 ["editorSuggestWidget.foreground"] = "#e2e6e6",
-                ["editorHoverWidget.background"] = "#354771F0"
+                ["editorHoverWidget.background"] = "#232934",
+                ["editorHoverWidget.border"] = "#374151"
             },
         });
 

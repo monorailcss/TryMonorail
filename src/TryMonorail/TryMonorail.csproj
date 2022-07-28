@@ -6,9 +6,6 @@
         <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
         <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
     </PropertyGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="**/*.razor" />
-  </ItemGroup>
     <ItemGroup>
         <PackageReference Include="BlazorMonaco" Version="2.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.7" />
