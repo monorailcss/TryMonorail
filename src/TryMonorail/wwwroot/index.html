@@ -38,10 +38,6 @@
             font-weight: 500;
         }
 
-        #app #loading:after {
-            content: var(--blazor-load-percentage-text, "0%");
-        }
-
         @keyframes clearToFull {
             from {
                 opacity: 0;
@@ -137,19 +133,14 @@
 <body>
 <div id="app">
     <div id="loading">
-        Loading
-        <div class="lds-ellipsis">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
+            Loading
+            <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
     </div>
-    <svg class="loading-progress">
-        <circle r="40%" cx="50%" cy="50%"/>
-        <circle r="40%" cx="50%" cy="50%"/>
-    </svg>
-    <div class="loading-progress-text"></div>
 </div>
 
 <div id="blazor-error-ui">
