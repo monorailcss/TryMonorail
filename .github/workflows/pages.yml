@@ -40,8 +40,8 @@ jobs:
       - name: Add Base HTML
         uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: '<base href="/" />'
-          replace: '<base href="/TryMonorail/" />'
+          find: '<base href="/"'
+          replace: '<base href="/TryMonorail/"'
           include: "src/TryMonorail/bin/release/net7.0/publish/wwwroot/index.html"
           regex: false
       - name: Setup Pages
