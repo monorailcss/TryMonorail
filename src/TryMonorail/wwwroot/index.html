@@ -13,12 +13,13 @@
             padding: 0;
             background-color: rgba(17, 24, 39, 1);
             overflow-y: hidden;
+            --blazor-load-percentage: 0%;
         }
 
         .monaco-editor-container {
             height: 100%;
             width: 100%;
-            zoom: .9;
+            zoom: 0.9;
         }
 
         @media (min-width: 1500px) {
@@ -36,6 +37,7 @@
             height: 100vh;
             font-size: 2rem;
             font-weight: 500;
+            flex-direction: column;
         }
 
         @keyframes clearToFull {
@@ -49,7 +51,45 @@
 
         #main-app {
             /* This section calls the slideInFromLeft animation we defined above */
-            animation: .25s ease-out 0s 1 clearToFull;
+            animation: 0.25s ease-out 0s 1 clearToFull;
+        }
+
+        #loading .loading-message {
+            font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+            font-size:1rem;
+            color:rgba(255,255,255,.4);
+            font-weight:300;
+            width:300px;
+            height: 2rem;
+            overflow:hidden;
+            position: relative;
+        }
+
+        #loading .loading-message .msg {
+            --load-text-offset: calc(var(--blazor-load-percentage));
+            position: absolute;
+            width:100%;
+            text-align: center;
+        }
+
+        #loading .loading-message .m1{
+            margin-left: calc((max(var(--load-text-offset), 20%) - 20%) * 100);
+        }
+
+        #loading .loading-message .m2{
+            margin-left: calc((min(var(--load-text-offset), 21%) - 21% + max(var(--load-text-offset), 40%) - 40%) * 100);
+        }
+
+        #loading .loading-message .m3{
+            margin-left: calc((min(var(--load-text-offset), 41%) - 41% + max(var(--load-text-offset), 60%) - 60%) * 100);
+        }
+
+        #loading .loading-message .m4{
+            margin-left: calc((min(var(--load-text-offset), 61%) - 61% + max(var(--load-text-offset), 80%) - 80%) * 100);
+        }
+
+        #loading .loading-message .m5{
+            margin-left: calc((min(var(--load-text-offset), 81%) - 81% + max(var(--load-text-offset), 100%) - 100%) * 100);
         }
 
 
@@ -57,7 +97,7 @@
             display: inline-block;
             position: relative;
             width: 80px;
-            height: 80px;
+            height: 60px;
         }
 
         .lds-ellipsis div {
@@ -124,6 +164,7 @@
             width: fit-content;
         }
 
+
     </style>
     <script src="https://unpkg.com/split-grid/dist/split-grid.js"></script>
 
@@ -133,13 +174,19 @@
 <body>
 <div id="app">
     <div id="loading">
-            Loading
-            <div class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+        <div class="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="loading-message">
+            <div class="msg m1">Reticulating Splines</div>
+            <div class="msg m2">Reconfiguring User Mental Processes</div>
+            <div class="msg m3">Inserting Sublimated Messages</div>
+            <div class="msg m4">Decomposing Singular Values</div>
+            <div class="msg m5">Almost there...</div>
+        </div>
     </div>
 </div>
 
