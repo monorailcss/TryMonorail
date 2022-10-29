@@ -8,12 +8,15 @@
     <link href="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.css" rel="stylesheet"/>
 
     <style>
+        html {
+            --blazor-load-percentage: 0%;
+        }
+
         body {
             margin: 0;
             padding: 0;
             background-color: rgba(17, 24, 39, 1);
             overflow-y: hidden;
-            --blazor-load-percentage: 0%;
         }
 
         .monaco-editor-container {
@@ -65,8 +68,12 @@
             position: relative;
         }
 
+        #loading .loading-message .msg:after {
+            content: var(--blazor-load-percentage);
+        }
+
         #loading .loading-message .msg {
-            --load-text-offset: calc(var(--blazor-load-percentage));
+            --load-text-offset: calc(clamp(0%, var(--blazor-load-percentage), 100%));
             position: absolute;
             width:100%;
             text-align: center;
