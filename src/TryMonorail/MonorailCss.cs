@@ -1,6 +1,28 @@
+using System.Text.RegularExpressions;
+
 namespace TryMonorail;
 
 internal static partial class MonorailCss
 {
     /* used as a marker for source generation */
+}
+
+internal partial class CssParser
+{
+    [GeneratedRegex(@"class\s*=\s*[\'\""](?<value>[^<]*?)[\'\""]", RegexOptions.CultureInvariant,
+        matchTimeoutMilliseconds: 1000)]
+    private static partial Regex FindCssClassRegex();
+
+    public static List<string> GetCssClasses(string html)
+    {
+        var matches = FindCssClassRegex().Matches(html);
+        var results = new List<string>(matches.Count);
+        for (var i = 0; i < matches.Count; i++)
+        {
+            results.Add(matches[i].Groups["value"].Captures[0].Value);
+        }
+
+        return results;
+    }
+
 }

@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="flex flex-col border-t border-gray-700">
-            @HeaderMessage("Generated CSS")
+            @HeaderMessage("HTML")
             <div class="flex-auto">
                 <MonacoEditor @ref="CssEditor" Id="cssViewer" ConstructionOptions="ViewerConstructionOptions"/>
             </div>
@@ -124,18 +124,12 @@
         return opts;
     }
 
+
     private async Task<bool> ModelChanged()
     {
         var htmlContent = await HtmlEditor.GetValue();
 
-        const string regExPattern = @"class\s*=\s*[\'\""](?<value>[^<]*?)[\'\""]";
-        var matches = Regex.Matches(htmlContent, regExPattern, RegexOptions.IgnoreCase);
-        var results = new List<string>(matches.Count);
-        for (var i = 0; i < matches.Count; i++)
-        {
-            results.Add(matches[i].Groups["value"].Captures[0].Value);
-        }
-
+        var results = CssParser.GetCssClasses(htmlContent);
         var (reset, css) = _framework.ProcessSplit(results);
 
         await CssEditor.SetValue(css);
