@@ -1,11 +1,7 @@
 ﻿@page "/"
 @using BlazorMonaco
 @using global::MonorailCss
-@using System.Reactive.Subjects
-@using System.Reactive.Linq
-@using System.Text.RegularExpressions
 @using BlazorMonaco.Bridge
-@using JetBrains.Annotations
 @inject IJSRuntime Js
 
 <PageTitle>Try MonorailCss</PageTitle>
@@ -14,7 +10,7 @@
         <div class="flex flex-col">
             @HeaderMessage("HTML")
             <div class="flex-auto">
-                <MonacoEditor @ref="HtmlEditor" Id="htmlEditor" ConstructionOptions="EditorConstructionOptions" OnDidInit="EditorOnInit" OnDidChangeModelContent="_processHtml.OnNext"/>
+                <MonacoEditor @ref="HtmlEditor" Id="htmlEditor" ConstructionOptions="EditorConstructionOptions" OnDidInit="EditorOnInit" OnDidChangeModelContent="ModelChanged"/>
             </div>
         </div>
         <div class="flex flex-col border-t border-gray-700">
@@ -48,9 +44,7 @@
         }
     });
 
-    private readonly Subject<ModelContentChangedEvent> _processHtml = new();
-
-    private RenderFragment<string> HeaderMessage = message =>
+    private readonly RenderFragment<string> HeaderMessage = message =>
         @<header class="flex-none px-6 py-4 bg-gray-800 text-gray-50 border-b border-gray-700">@message</header>;
 
     protected override void OnInitialized()
@@ -63,10 +57,6 @@
             InsertText = kvp.Key,
             Kind = CompletionItemKind.Text
         }).ToArray();
-
-        _processHtml.Throttle(TimeSpan.FromMilliseconds(350))
-            .SelectMany(_ => ModelChanged())
-            .Subscribe(_ => { StateHasChanged(); });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -74,8 +64,11 @@
         if (firstRender)
         {
             await Js.InvokeVoidAsync("initSplit");
+            // bit of a hack to give the preview viewer a chance to add event listeners. probably should have it
+            // inform us it is loaded and then we could send it the data, but a task for another day.
+            await Task.Delay(50);
+            await UpdateView();
         }
-
     }
 
     private StandaloneEditorConstructionOptions StandardOptions() => new()
@@ -125,7 +118,18 @@
     }
 
 
+    private readonly DebounceHelper _debouncer = new();
+
     private async Task<bool> ModelChanged()
+    {
+        return await _debouncer.DebounceAsync(async (cancellationToken) =>
+        {
+            await UpdateView();
+            return true;
+        }, 200);
+    }
+
+    private async Task UpdateView()
     {
         var htmlContent = await HtmlEditor.GetValue();
 
@@ -135,8 +139,6 @@
         await CssEditor.SetValue(css);
 
         await PreviewViewer.UpdateAsync(htmlContent, $"{reset}{css}");
-
-        return true;
     }
 
     private async Task EditorOnInit(MonacoEditorBase editor)
@@ -182,9 +184,7 @@
                 StartColumn = 1, StartLineNumber = 1, EndColumn = position.Column, EndLineNumber = position.LineNumber
             }, EndOfLinePreference.TextDefined);
 
-            var match = Regex.Match(textUntilPosition, "<.*class\\s*=\\s*['|\"]([^\"]*)?$");
-
-            if (!match.Success)
+            if (!CssParser.IsInCssClass(textUntilPosition))
             {
                 return null;
             }
