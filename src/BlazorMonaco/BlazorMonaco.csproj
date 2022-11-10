@@ -1,21 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <PublishTrimmed>true</PublishTrimmed>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <PublishTrimmed>true</PublishTrimmed>
+  </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\lib\monaco-editor\min-maps\vs\base\" />
-    <Folder Include="wwwroot\lib\monaco-editor\min\vs\base\browser\ui\codiconLabel\" />
-    <Folder Include="wwwroot\lib\monaco-editor\min\vs\basic-languages\" />
-    <Folder Include="wwwroot\lib\monaco-editor\min\vs\language\" />
+    <Folder Include="wwwroot\lib\monaco-editor\min-maps\vs\base\"/>
+    <Folder Include="wwwroot\lib\monaco-editor\min\vs\base\browser\ui\codiconLabel\"/>
+    <Folder Include="wwwroot\lib\monaco-editor\min\vs\basic-languages\"/>
+    <Folder Include="wwwroot\lib\monaco-editor\min\vs\language\"/>
   </ItemGroup>
 </Project>

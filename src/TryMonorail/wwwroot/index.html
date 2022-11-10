@@ -164,11 +164,17 @@
             }
         }
 
-        .monaco-editor .monaco-hover {
+        .monaco-hover {
             border-radius: 4px;
             backdrop-filter: blur(4px);
-            min-width: 20ch;
+            min-width: 40ch;
+            max-width: 80ch;
             width: fit-content;
+            font-weight:300;
+        }
+
+        .monaco-hover-content {
+            max-width: 80ch !important;
         }
 
 

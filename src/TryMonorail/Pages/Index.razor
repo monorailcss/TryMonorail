@@ -8,13 +8,13 @@
 <div class="max-w-full h-full inset-4" style="display: grid;grid-template-columns: 1fr 6px 2fr;">
     <div class="grid grid-cols-1 grid-rows-2">
         <div class="flex flex-col">
-            @HeaderMessage("HTML")
+            @_headerMessage("HTML")
             <div class="flex-auto">
                 <MonacoEditor @ref="HtmlEditor" Id="htmlEditor" ConstructionOptions="EditorConstructionOptions" OnDidInit="EditorOnInit" OnDidChangeModelContent="ModelChanged"/>
             </div>
         </div>
         <div class="flex flex-col border-t border-gray-700">
-            @HeaderMessage("HTML")
+            @_headerMessage("HTML")
             <div class="flex-auto">
                 <MonacoEditor @ref="CssEditor" Id="cssViewer" ConstructionOptions="ViewerConstructionOptions"/>
             </div>
@@ -31,8 +31,6 @@
 @code{
     private MonacoEditor HtmlEditor { get; set; } = null!;
     private MonacoEditor CssEditor { get; set; } = null!;
-    private CompletionItem[] _allClasses = null!;
-
     private PreviewViewer PreviewViewer { get; set; } = null!;
 
     private readonly CssFramework _previewFramework = new CssFramework();
@@ -44,20 +42,8 @@
         }
     });
 
-    private readonly RenderFragment<string> HeaderMessage = message =>
+    private readonly RenderFragment<string> _headerMessage = message =>
         @<header class="flex-none px-6 py-4 bg-gray-800 text-gray-50 border-b border-gray-700">@message</header>;
-
-    protected override void OnInitialized()
-    {
-        _allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem()
-        {
-            Label = kvp.Key,
-            Detail = kvp.Value,
-            Preselect = false,
-            InsertText = kvp.Key,
-            Kind = CompletionItemKind.Text
-        }).ToArray();
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -122,7 +108,7 @@
 
     private async Task<bool> ModelChanged()
     {
-        return await _debouncer.DebounceAsync(async (cancellationToken) =>
+        return await _debouncer.DebounceAsync(async _ =>
         {
             await UpdateView();
             return true;
@@ -166,7 +152,17 @@
         });
 
         await MonacoEditorBase.SetTheme("my-custom-theme");
-        await MonacoEditorBase.RegisterMonorailCompletionProvider(_allClasses);
+
+        var allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem()
+        {
+            Label = kvp.Key,
+            Detail = kvp.Value,
+            Preselect = false,
+            InsertText = kvp.Key,
+            Kind = CompletionItemKind.Text
+        }).ToArray();
+
+        await MonacoEditorBase.RegisterMonorailCompletionProvider(allClasses);
         await MonacoEditorBase.RegisterHoverProviderAsync("html", async (uri, position) =>
         {
             var model = await MonacoEditorBase.GetModel(uri);
