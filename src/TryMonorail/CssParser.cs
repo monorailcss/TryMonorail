@@ -17,16 +17,15 @@ internal static partial class CssParser
         return IsInCssClassReg().IsMatch(html);
     }
 
-    public static List<string> GetCssClasses(string html)
+    public static IEnumerable<string> GetCssClasses(string html)
     {
         var matches = FindCssClassRegex().Matches(html);
-        var results = new List<string>(matches.Count);
+        var results = new string[matches.Count];
         for (var i = 0; i < matches.Count; i++)
         {
-            results.Add(matches[i].Groups["value"].Captures[0].Value);
+            results[i] = matches[i].Groups["value"].Captures[0].Value;
         }
 
         return results;
     }
-
 }

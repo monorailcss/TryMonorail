@@ -1,7 +1,8 @@
 ﻿@page "/"
 @using BlazorMonaco
-@using global::MonorailCss
 @using BlazorMonaco.Bridge
+@using global::MonorailCss
+@using Range = BlazorMonaco.Bridge.Range
 @inject IJSRuntime Js
 
 <PageTitle>Try MonorailCss</PageTitle>
@@ -23,7 +24,7 @@
     <div class="gutter-col-1 bg-slate-600 shadow-inner" style="grid-row: 1/-1;cursor: col-resize;grid-column: 2"></div>
     <div>
         <div class="h-screen w-full flex">
-            <PreviewViewer @ref="@PreviewViewer" />
+            <PreviewViewer @ref="@PreviewViewer"/>
         </div>
     </div>
 </div>
@@ -34,9 +35,10 @@
     private PreviewViewer PreviewViewer { get; set; } = null!;
 
     private readonly CssFramework _previewFramework = new CssFramework();
-    private readonly CssFramework _framework = new(new CssFrameworkSettings()
+
+    private readonly CssFramework _framework = new(new CssFrameworkSettings
     {
-        Applies = new Dictionary<string, string>()
+        Applies = new Dictionary<string, string>
         {
             { "body", "font-sans" }
         }
@@ -57,13 +59,13 @@
         }
     }
 
-    private StandaloneEditorConstructionOptions StandardOptions() => new()
+    private static StandaloneEditorConstructionOptions StandardOptions() => new()
     {
         AutomaticLayout = true,
         Language = "html",
         GlyphMargin = true,
         HighlightActiveIndentGuide = false,
-        Scrollbar = new EditorScrollbarOptions() { HorizontalScrollbarSize = 8, VerticalScrollbarSize = 8, },
+        Scrollbar = new EditorScrollbarOptions { HorizontalScrollbarSize = 8, VerticalScrollbarSize = 8, },
         FoldingHighlight = false,
         RenderLineHighlightOnlyWhenFocus = true,
         RenderLineHighlight = "none",
@@ -73,13 +75,13 @@
         ColorDecorators = true,
         SuggestLineHeight = 17,
         FontSize = 15,
-        Padding = new EditorPaddingOptions(){ Top = 4, Bottom = 4},
-        Hover = new EditorHoverOptions()
+        Padding = new EditorPaddingOptions { Top = 4, Bottom = 4 },
+        Hover = new EditorHoverOptions
         {
             Enabled = true,
-            Delay = 100,
+            Delay = 200,
         },
-        Minimap = new EditorMinimapOptions()
+        Minimap = new EditorMinimapOptions
         {
             Enabled = false,
         },
@@ -89,12 +91,14 @@
         Theme = "my-custom-theme",
     };
 
-    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    private static StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
     {
-        return StandardOptions();
+        var opts = StandardOptions();
+        opts.Language = "html";
+        return opts;
     }
 
-    private StandaloneEditorConstructionOptions ViewerConstructionOptions(MonacoEditor editor)
+    private static StandaloneEditorConstructionOptions ViewerConstructionOptions(MonacoEditor editor)
     {
         var opts = StandardOptions();
         opts.ReadOnly = true;
@@ -115,6 +119,9 @@
         }, 200);
     }
 
+    static string _previousCss = string.Empty;
+    private static readonly char[] SplitChars = { '\t', ' ', '\'', '\"' };
+
     private async Task UpdateView()
     {
         var htmlContent = await HtmlEditor.GetValue();
@@ -122,7 +129,12 @@
         var results = CssParser.GetCssClasses(htmlContent);
         var (reset, css) = _framework.ProcessSplit(results);
 
-        await CssEditor.SetValue(css);
+        if (_previousCss != css)
+        {
+
+            await CssEditor.SetValue(css);
+            _previousCss = css;
+        }
 
         await PreviewViewer.UpdateAsync(htmlContent, $"{reset}{css}");
     }
@@ -153,7 +165,7 @@
 
         await MonacoEditorBase.SetTheme("my-custom-theme");
 
-        var allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem()
+        var allClasses = _framework.GetAllRules().Select(kvp => new CompletionItem
         {
             Label = kvp.Key,
             Detail = kvp.Value,
@@ -161,6 +173,7 @@
             InsertText = kvp.Key,
             Kind = CompletionItemKind.Text
         }).ToArray();
+
 
         await MonacoEditorBase.RegisterMonorailCompletionProvider(allClasses);
         await MonacoEditorBase.RegisterHoverProviderAsync("html", async (uri, position) =>
@@ -175,7 +188,7 @@
             }
 
             // check to see if we are hovering over something in a css class definition.
-            var textUntilPosition = await model.GetValueInRange(new BlazorMonaco.Bridge.Range()
+            var textUntilPosition = await model.GetValueInRange(new Range
             {
                 StartColumn = 1, StartLineNumber = 1, EndColumn = position.Column, EndLineNumber = position.LineNumber
             }, EndOfLinePreference.TextDefined);
@@ -189,21 +202,20 @@
             // that we don't care about. so we'll get the current word and search for the first previous and last whitespace
             // by hand.
             var line = await model.GetLineContent(position.LineNumber);
-            var splitChars = new[] { '\t', ' ', '\'', '\"' };
-            var firstIndex = line.LastIndexOfAny(splitChars, word.StartColumn) + 1;
-            var lastIndex = line.IndexOfAny(splitChars, word.EndColumn - 1);
+            var firstIndex = line.LastIndexOfAny(SplitChars, word.StartColumn) + 1;
+            var lastIndex = line.IndexOfAny(SplitChars, word.EndColumn - 1);
             var w = line[firstIndex..lastIndex];
             var css = _previewFramework.ProcessSplit(new[] { w });
 
             // return the word with a custom range matching our calculations.
-            return new Hover()
+            return new Hover
             {
-                Contents = new []
+                Contents = new[]
                 {
-                    new MarkdownString { Value = $"**CSS**", Uris = uri, IsTrusted = true, SupportThemeIcons = false },
+                    new MarkdownString { Value = "**CSS**", Uris = uri, IsTrusted = true, SupportThemeIcons = false },
                     new MarkdownString { Value = $"```css\n{css.Utilities}\n```", Uris = uri, IsTrusted = true, SupportThemeIcons = false }
                 },
-                Range = new BlazorMonaco.Bridge.Range()
+                Range = new Range
                 {
                     StartLineNumber = position.LineNumber,
                     EndLineNumber = position.LineNumber,
@@ -232,4 +244,5 @@
     </div>
 </div>".Trim());
     }
+
 }
