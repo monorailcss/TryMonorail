@@ -1,4 +1,4 @@
-﻿@using global::MonorailCss
+﻿@using MonorailCss
 @inherits LayoutComponentBase
 
 <HeadContent>
@@ -24,7 +24,7 @@
          // that looks at all the html class attributes in the razor files
          // and returns them as an array. We can then pass them into
          // monorail to generated the needed CSS
-         var values = MonorailCss.CssClassValues();
+         var values = Monorail.CssClassValues();
          var framework = new CssFramework();
          _cssContent = framework.Process(values);
          base.OnAfterRender(firstRender);
