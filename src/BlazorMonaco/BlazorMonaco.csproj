@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.10"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.10"/>
   </ItemGroup>
 
   <ItemGroup>
