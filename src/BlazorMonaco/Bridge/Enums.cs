@@ -267,7 +267,7 @@ public enum KeyCode
     US_EQUAL = 81,
     /**
          * For any country/region, the ',' key
-         * For the US standard keyboard, the ',<' key
+         * For the US standard keyboard, the ',&lt;' key
          */
     US_COMMA = 82,
     /**
