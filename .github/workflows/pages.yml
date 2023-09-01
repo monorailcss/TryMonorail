@@ -44,7 +44,7 @@ jobs:
         with:
           find: '<base href="/"'
           replace: '<base href="/TryMonorail/"'
-          include: "src/TryMonorail/bin/release/net7.0/publish/wwwroot/index.html"
+          include: "src/TryMonorail/bin/release/net8.0/publish/wwwroot/index.html"
           regex: false
       - name: Setup Pages
         uses: actions/configure-pages@v2
