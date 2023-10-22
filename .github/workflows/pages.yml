@@ -40,7 +40,7 @@ jobs:
       - run: dotnet publish -c release
         working-directory: src/TryMonorail
       - name: Add Base HTML
-        uses: jacobtomlinson/gha-find-replace@v2
+        uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: '<base href="/"'
           replace: '<base href="/TryMonorail/"'
