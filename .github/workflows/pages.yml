@@ -47,7 +47,7 @@ jobs:
           include: "src/TryMonorail/bin/release/net8.0/publish/wwwroot/index.html"
           regex: false
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
