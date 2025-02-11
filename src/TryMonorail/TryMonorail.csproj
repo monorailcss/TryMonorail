@@ -10,8 +10,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="BadIdeas.Icons.FontAwesome" Version="0.0.0-alpha.0.21" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-preview.7.23375.9" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-preview.7.23375.9" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.2" PrivateAssets="all" />
         <PackageReference Include="MonorailCss" Version="0.0.2-preview.0.3.1.34" />
         <PackageReference Include="MonorailCss.SourceGen.AspNet" Version="0.0.0-alpha.0.22" PrivateAssets="all" />
     </ItemGroup>
