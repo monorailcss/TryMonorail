@@ -33,10 +33,9 @@ jobs:
         with:
           submodules: true
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
-          include-prerelease: true
+          dotnet-version: '9.x'
       - run: dotnet publish -c release
         working-directory: src/TryMonorail
       - name: Add Base HTML
@@ -44,15 +43,15 @@ jobs:
         with:
           find: '<base href="/"'
           replace: '<base href="/TryMonorail/"'
-          include: "src/TryMonorail/bin/release/net7.0/publish/wwwroot/index.html"
+          include: "src/TryMonorail/bin/release/net9.0/publish/wwwroot/index.html"
           regex: false
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: 'src/TryMonorail/bin/release/net8.0/publish/wwwroot/'
+          path: 'src/TryMonorail/bin/release/net9.0/publish/wwwroot/'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@main
+        uses: actions/deploy-pages@v4
